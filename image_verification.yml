@@ -1,0 +1,33 @@
+---
+
+- hosts: SWITCHES
+  gather_facts: no
+  vars:
+    desired_ios_version: 16.12.07
+    #upgrade_ios_filename: "cat9k_lite_iosxe.17.06.05.SPA.bin"
+    upgrade_ios_filename: "cat9k_lite_iosxe.16.12.07.SPA.bin"
+    
+  tasks:
+## Check current image and verify if it's on the desired version of IOS software
+
+    - name: Check Image version
+      ios_facts:
+
+    - debug:
+        msg:
+          - "Current version is {{ ansible_net_version }}"
+
+    - name: ASSERT THAT THE IOS VERSION IS CORRECT
+
+#      vars:
+#        desired_ios_version: desired_ios_version
+
+      assert:
+        that:
+          - desired_ios_version == ansible_net_version
+        fail_msg: 
+          - "The desired upgrade version is: {{desired_ios_version}} The current version is: {{ansible_net_version}}"
+          - "Upgrade FAILED"
+        success_msg: "IOS upgrade has been SUCCESSFULLY completed"
+    
+

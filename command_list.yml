@@ -1,0 +1,48 @@
+---
+
+## Gets date and time info needed for file creation
+- hosts: localhost
+  tasks:
+   - name: Get ansible date/time facts
+     setup:
+       filter: "ansible_date_time"
+       gather_subset: "!all"
+
+   - name: Store DTG as fact
+     set_fact:
+       DTG: "{{ ansible_date_time.date }}"
+
+## runs a list of show commands on the cisco device
+- hosts: SWITCHES 
+
+  vars:
+    command_list:
+      - show etherchannel summary 
+      - show cdp neigh 
+      - sh switch stack-ports
+      - sh switch 
+      - show environment all
+      - show cdp neighbors detail
+      - show version 
+      - show license usage 
+      - show clock
+      - show users
+      - show boot
+      - show int status
+      - show arp
+      - show ip interface brief
+      - show mac address-table
+      - show vtp status
+      - show inventory
+      - show spanning-tree
+
+  tasks:
+   - name: Run the SHOW commands and save output 
+     ios_command:
+       commands: "{{ command_list }}"
+     register: showoutput
+
+   - name: "Put all the files together into one nice text file"
+     template: 
+       src: template.j2 
+       dest: "~/backups/{{hostvars.localhost.DTG}}/{{ inventory_hostname }}-{{hostvars.localhost.DTG}}-showoutput.txt"

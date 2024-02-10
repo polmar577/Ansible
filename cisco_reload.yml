@@ -1,0 +1,15 @@
+---
+
+- hosts: SWITCHES
+  gather_facts: no
+  
+  tasks:
+
+## Reload the device
+    - name: Reload the Device
+      cli_command:
+        command: reload
+        prompt:
+          - confirm
+        answer:
+          - 'y'

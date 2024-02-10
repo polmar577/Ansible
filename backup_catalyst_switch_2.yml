@@ -1,0 +1,24 @@
+---
+
+## Gets date and time info needed for file creation
+- hosts: localhost
+  tasks:
+   - name: Get ansible date/time facts
+     setup:
+       filter: "ansible_date_time"
+       gather_subset: "!all"
+
+   - name: Store DTG as fact
+     set_fact:
+       DTG: "{{ ansible_date_time.date }}"
+
+## backs up switch
+- hosts: SWITCHES
+  tasks:
+   - name: Backup Catalyst Switch 
+
+     ios_config:
+       backup: yes
+       backup_options:
+         filename: "{{inventory_hostname}}-{{hostvars.localhost.DTG}}-config.txt"
+         dir_path: /home/mark/backups/{{hostvars.localhost.DTG}}

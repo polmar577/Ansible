@@ -1,0 +1,22 @@
+---
+
+- hosts: SWITCHES
+  gather_facts: no
+  vars:
+    desired_ios_version: 16.12.07
+    #upgrade_ios_filename: "cat9k_lite_iosxe.17.06.05.SPA.bin"
+    upgrade_ios_filename: "cat9k_lite_iosxe.16.12.07.SPA.bin"
+    #upgrade_ios_md5: "77f9504141dad5db1aef7c355051254b"
+    upgrade_ios_md5: "ce156add262f1d4a0c798a13aa75672c"
+  
+  tasks:
+
+## Check MD5 Hash
+    - name: Check MD5 Hash
+      ios_command:
+        commands:
+          - command: "verify /md5 flash:{{upgrade_ios_filename}} {{ upgrade_ios_md5}}"
+      register: md5_result
+      vars:
+        ansible_command_timeout: 420
+        

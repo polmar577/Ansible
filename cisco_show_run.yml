@@ -1,0 +1,28 @@
+---
+
+## Gets date and time info needed for file creation
+- hosts: localhost
+  tasks:
+   - name: Get ansible date/time facts
+     setup:
+       filter: "ansible_date_time"
+       gather_subset: "!all"
+
+   - name: Store DTG as fact
+     set_fact:
+       DTG: "{{ ansible_date_time.date }}"
+
+## Run show run command and save to file
+- hosts: SWITCHES 
+
+  tasks:
+   - name: Backup  
+     cisco.ios.ios_command:
+       commands: show run  
+     register: config
+
+   - name: Save output to ~/backups/
+     copy:
+       content: "{{config.stdout[0]}}"
+       dest: "~/backups/{{hostvars.localhost.DTG}}/{{inventory_hostname}}-{{hostvars.localhost.DTG}}-config.txt"
+       

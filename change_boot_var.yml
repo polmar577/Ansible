@@ -1,0 +1,12 @@
+---
+
+- hosts: SWITCHES
+  gather_facts: no
+  
+  tasks:
+## Change the boot variable to the new image
+   - name: Change Boot Variable to new image
+     ios_config:
+       commands:
+         - "boot system flash:cat9k_lite_iosxe.17.06.05.SPA.bin"
+       save_when: always
